@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boat Rental App</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Header Styles */
+        header {
+            width: 100%;
+            background-color: #007bff; /* Match the UI blue */
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: bold;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000; /* Ensures header is above other elements */
+        }
+
+        #app {
+            width: 100%;
+            max-width: 350px;
+            background-color: #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 70px; /* Add margin to push content below the header */
+        }
+
+        h2 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            color: #007bff;
+        }
+
+        input, button {
+            padding: 12px 15px;
+            font-size: 1em;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .rental-list {
+            margin-top: 20px;
+        }
+
+        .rental-item {
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .rental-item .boats {
+            font-weight: bold;
+            font-size: 1.4em;
+            margin-bottom: 8px;
+        }
+
+        .timer {
+            font-weight: bold;
+            color: #ff4d4d;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: #007bff; /* Progress color */
+            transition: width 0.5s;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        #custom-duration {
+            width: 50px;
+        }
+
+        #boat-list label {
+            margin-bottom: 5px;
+        }
+
+        #rental-list {
+            padding-left: 0;
+        }
+
+        p {
+            margin: 0;
+            margin-bottom: 5px;
+        }
+
+        .collect-button, .delete-button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            margin-right: 10px;
+        }
+
+        .collect-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .collect-button:hover:not(:disabled), .delete-button:hover {
+            background-color: #218838;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .delete-button {
+            background-color: #dc3545; /* Red color for delete button */
+        }
+        footer {
+            position: fixed;
+            bottom: 0;
+            background-color: ; /* Footer background color */
+            color: grey; /* Footer text color */
+            text-align: center; /* Center text */
+            padding: 25px 0; /* Padding for footer */
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        Kiddies Boat Tracker
+    </header>
+    <div id="app">
+        <div id="receipt-section" class="section">
+            <h2>Start</h2>
+            <input type="text" id="receipt-input" placeholder="Enter receipt number">
+            <button id="next-to-boats-button">Next</button>
+        </div>
+
+        <div id="boat-section" class="section hidden">
+            <h2>Select Boat(s)</h2>
+            <div id="boat-list">
+                <label><input type="checkbox" value="1"> Boat 1</label>
+                <label><input type="checkbox" value="2"> Boat 2</label>
+                <label><input type="checkbox" value="3"> Boat 3</label>
+                <label><input type="checkbox" value="4"> Boat 4</label>
+                <label><input type="checkbox" value="5"> Boat 5</label>
+                <label><input type="checkbox" value="6"> Boat 6</label>
+                <label><input type="checkbox" value="7"> Boat 7</label>
+                <label><input type="checkbox" value="8"> Boat 8</label>
+                <label><input type="checkbox" value="9"> Boat 9</label>
+                <label><input type="checkbox" value="10"> Boat 10</label>
+            </div>
+            <button id="next-button">Next</button>
+        </div>
+
+        <div id="duration-section" class="section hidden">
+            <h2>Select Duration</h2>
+            <label><input type="radio" name="duration" value="10" checked> 10 minutes</label>
+            <label><input type="radio" name="duration" value="20"> 20 minutes</label>
+            <label><input type="radio" name="duration" value="30"> 30 minutes</label>
+            <label><input type="radio" name="duration" value="custom"> Custom Duration: <input type="number" id="custom-duration" min="1"></label>
+            <button id="confirm-button">Confirm</button>
+        </div>
+
+        <div id="confirmation-section" class="section hidden">
+            <h2>Finish</h2>
+            <p id="confirmation-details"></p>
+            <div class="left">
+                <button id="finish-button">Confirm</button>
+            </div>
+        </div>
+
+        <div id="active-rentals" class="section">
+            <h2>Active Rentals</h2>
+            <div class="rental-list" id="rental-list"></div>
+        </div>
+    </div>
+
+    <script>
+        let selectedBoats = [];
+        let selectedDuration = 10; // Default duration
+        let receiptNumber = '';
+        let db;
+
+        // Initialize database
+        function initDatabase() {
+            const request = indexedDB.open("BoatRentalDB", 1);
+            request.onupgradeneeded = function(event) {
+                db = event.target.result;
+                db.createObjectStore("rentals", { keyPath: "id", autoIncrement: true });
+            };
+            request.onsuccess = function(event) {
+                db = event.target.result;
+                displayActiveRentals(); // Load rentals after database is initialized
+            };
+            request.onerror = function(event) {
+                console.error("Database error: ", event.target.error);
+            };
+        }
+
+        // Show the boat selection section after entering receipt number
+        document.getElementById('next-to-boats-button').addEventListener('click', function() {
+            receiptNumber = document.getElementById('receipt-input').value;
+            document.getElementById('receipt-section').classList.add('hidden');
+            document.getElementById('boat-section').classList.remove('hidden');
+        });
+
+        // Show the duration section after selecting boats
+        document.getElementById('next-button').addEventListener('click', function() {
+            selectedBoats = Array.from(document.querySelectorAll('#boat-list input:checked')).map(cb => cb.value);
+            document.getElementById('boat-section').classList.add('hidden');
+            document.getElementById('duration-section').classList.remove('hidden');
+        });
+
+        // Confirm the rental and show the confirmation section
+        document.getElementById('confirm-button').addEventListener('click', function() {
+            selectedDuration = document.querySelector('input[name="duration"]:checked').value;
+            if (selectedDuration === "custom") {
+                const customDuration = document.getElementById('custom-duration').value;
+                selectedDuration = customDuration ? parseInt(customDuration) : 10; // Default to 10 if input is empty
+            }
+            saveRental(selectedBoats, selectedDuration, receiptNumber);
+            document.getElementById('duration-section').classList.add('hidden');
+            document.getElementById('confirmation-section').classList.remove('hidden');
+        });
+
+        // Save rental to the database
+        function saveRental(boats, duration, receipt) {
+            const rentalData = {
+                boats: boats,
+                duration: duration,
+                timeOut: new Date(Date.now() + duration * 60000).toISOString(), // Set timeOut based on duration
+                receipt: receipt
+            };
+            const transaction = db.transaction("rentals", "readwrite");
+            const store = transaction.objectStore("rentals");
+            store.add(rentalData);
+            displayActiveRentals();
+        }
+
+        // Display active rentals
+        function displayActiveRentals() {
+            const transaction = db.transaction("rentals", "readonly");
+            const store = transaction.objectStore("rentals");
+            const request = store.getAll();
+            request.onsuccess = function(event) {
+                const rentals = event.target.result;
+                const rentalList = document.getElementById('rental-list');
+                rentalList.innerHTML = ""; // Clear previous entries
+                rentals.forEach(rental => {
+                    const rentalItem = document.createElement('div');
+                    rentalItem.className = 'rental-item';
+                    const timer = Math.max(0, (new Date(rental.timeOut) - Date.now()) / 1000);
+                    rentalItem.innerHTML = `
+                        <p class="boats">Boats: ${rental.boats.join(", ")}</p>
+                        <p>Receipt Number: ${rental.receipt}</p>
+                        <p>Duration: ${rental.duration} minutes</p>
+                        <p>Time out: ${new Date(rental.timeOut).toLocaleString()}</p>
+                        <div class="timer">${formatTime(timer)} remaining</div>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: ${((timer / (rental.duration * 60)) * 100).toFixed(2)}%"></div>
+                        </div>
+                        <button class="collect-button" data-id="${rental.id}" disabled>Collect</button>
+                        <button class="delete-button" data-id="${rental.id}">Delete</button>
+                    `;
+                    rentalList.appendChild(rentalItem);
+
+                    // Start a timer for each rental
+                    const interval = setInterval(() => {
+                        const timeLeft = Math.max(0, (new Date(rental.timeOut) - Date.now()) / 1000);
+                        rentalItem.querySelector('.timer').textContent = `${formatTime(timeLeft)} remaining`;
+                        rentalItem.querySelector('.progress').style.width = `${((timeLeft / (rental.duration * 60)) * 100).toFixed(2)}%`;
+                        if (timeLeft <= 0) {
+                            clearInterval(interval);
+                            rentalItem.querySelector('.collect-button').disabled = false;
+                        }
+                    }, 1000);
+                });
+            };
+        }
+
+        // Format time into MM:SS
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        // Collect the rental or delete it
+        document.getElementById('rental-list').addEventListener('click', function(event) {
+            const rentalId = parseInt(event.target.getAttribute('data-id'));
+            if (event.target.classList.contains('collect-button')) {
+                const transaction = db.transaction(["rentals"], "readwrite");
+                const store = transaction.objectStore("rentals");
+                store.delete(rentalId);
+                displayActiveRentals();
+            } else if (event.target.classList.contains('delete-button')) {
+                const transaction = db.transaction(["rentals"], "readwrite");
+                const store = transaction.objectStore("rentals");
+                store.delete(rentalId);
+                displayActiveRentals();
+            }
+        });
+
+        // Redirect back to the receipt section when the Finish button is clicked
+        document.getElementById('finish-button').addEventListener('click', function() {
+            document.getElementById('confirmation-section').classList.add('hidden');
+            document.getElementById('receipt-section').classList.remove('hidden');
+            // Clear previous input
+            document.getElementById('receipt-input').value = '';
+            // Clear previously selected boats
+            document.querySelectorAll('#boat-list input:checked').forEach(checkbox => checkbox.checked = false);
+        });
+
+        // Initialize the database on page load
+        window.onload = initDatabase;
+    </script>
+    <footer>
+        A system by Afiq Mohd Rawi (2023696426)
+    </footer>
+</body>
+</html>
